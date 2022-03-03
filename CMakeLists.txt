@@ -583,6 +583,12 @@ if(PNG_STATIC)
     set_target_properties(png_static PROPERTIES PREFIX "lib")
   endif()
   target_link_libraries(png_static ${ZLIB_LIBRARY} ${M_LIBRARY})
+if(gaen_MINEXT)
+  target_include_directories(png_static PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endif()
 endif()
 
 if(PNG_FRAMEWORK)
