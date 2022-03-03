@@ -272,6 +272,12 @@ find_program(AWK NAMES gawk awk)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+if(gaen_MINEXT)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/scripts/pnglibconf.h.prebuilt
+    ${CMAKE_CURRENT_BINARY_DIR}/pnglibconf.h
+    )
+else(gaen_MINEXT)
 if(NOT AWK OR ANDROID)
   # No awk available to generate sources; use pre-built pnglibconf.h
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pnglibconf.h.prebuilt
@@ -452,6 +458,7 @@ else()
     "${CMAKE_CURRENT_BINARY_DIR}/scripts/symbols.out"
     "${CMAKE_CURRENT_BINARY_DIR}/scripts/vers.out")
 endif(NOT AWK OR ANDROID)
+endif(gaen_MINEXT)
 
 # OUR SOURCES
 set(libpng_public_hdrs
@@ -465,9 +472,11 @@ set(libpng_private_hdrs
   pnginfo.h
   pngstruct.h
 )
+if(NOT gaen_MINEXT)
 if(AWK AND NOT ANDROID)
   list(APPEND libpng_private_hdrs "${CMAKE_CURRENT_BINARY_DIR}/pngprefix.h")
 endif()
+endif() # gaen_MINEXT
 set(libpng_sources
   ${libpng_public_hdrs}
   ${libpng_private_hdrs}
@@ -553,7 +562,9 @@ if(PNG_STATIC)
   # does not work without changing name
   set(PNG_LIB_NAME_STATIC png_static)
   add_library(png_static STATIC ${libpng_sources})
+  if(NOT gaen_MINEXT)
   add_dependencies(png_static genfiles)
+  endif() # gaen_MINEXT
   # MSVC doesn't use a different file extension for shared vs. static
   # libs.  We are able to change OUTPUT_NAME to remove the _static
   # for all other platforms.
